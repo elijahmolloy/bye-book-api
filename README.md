@@ -58,6 +58,11 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Patterns
+- Entities will not contain any validation other than required/unique/etc. All validation should be completed on the DTOs that are passed from controllers -> Services.
+- If there is a module that contains a service/entity, only that module's service will be allowed to interact with that mongoose schema. Services and controllers can interact with other services from other modules. 
+- Entities should always be converted to a DTO by the controllers before being returned.
+
 ## Support
 
 Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
