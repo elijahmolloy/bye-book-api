@@ -8,8 +8,14 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [UsersModule, AuthModule, TokensModule, ConfigModule.forRoot(), MongooseModule.forRoot(process.env.MONGODB_URL)],
-  controllers: [AppController],
-  providers: [AppService],
+	imports: [
+		UsersModule,
+		AuthModule,
+		TokensModule,
+		ConfigModule.forRoot(),
+		MongooseModule.forRoot(process.env.MONGODB_URL)
+	],
+	controllers: [AppController],
+	providers: [AppService]
 })
 export class AppModule {}
