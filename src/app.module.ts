@@ -6,6 +6,8 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { User, UserSchema } from './users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
 	imports: [
@@ -43,7 +45,10 @@ import * as bcrypt from 'bcrypt';
 					return schema;
 				}
 			}
-		])
+		]),
+		ServeStaticModule.forRoot({
+			rootPath: join(__dirname, '..', 'client'),
+		  }),
 	],
 	controllers: [],
 	providers: []
