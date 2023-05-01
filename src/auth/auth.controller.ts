@@ -1,11 +1,17 @@
-import { Controller, NotImplementedException, Post } from '@nestjs/common';
+import {
+	Body,
+	Controller,
+	NotImplementedException,
+	Post
+} from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
+import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
 	@Post('register')
-	async register(): Promise<any> {
+	async register(@Body() createUserDto: CreateUserDto): Promise<any> {
 		throw new NotImplementedException();
 	}
 
