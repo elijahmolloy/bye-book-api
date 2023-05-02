@@ -16,11 +16,6 @@ export class UsersService {
 		@InjectModel(User.name) private readonly userModel: Model<User>
 	) {}
 
-	/**
-	 *
-	 * @param createUserDto
-	 * @returns
-	 */
 	async create(createUserDto: CreateUserDto): Promise<User> {
 		if (await this.isEmailTaken(createUserDto.email)) {
 			throw new BadRequestException('Email already taken');
@@ -35,10 +30,6 @@ export class UsersService {
 		});
 	}
 
-	/**
-	 *
-	 * @returns
-	 */
 	async findAll(): Promise<User[]> {
 		return await this.userModel.find();
 	}
@@ -47,11 +38,6 @@ export class UsersService {
 		throw new NotImplementedException();
 	}
 
-	/**
-	 *
-	 * @param id
-	 * @returns
-	 */
 	async findOne(id: number): Promise<User> {
 		return await this.userModel.findById(id);
 	}
@@ -60,30 +46,14 @@ export class UsersService {
 		throw new NotImplementedException();
 	}
 
-	/**
-	 *
-	 * @param id
-	 * @param updateUserDto
-	 * @returns
-	 */
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
 		return await this.userModel.findByIdAndUpdate(id, updateUserDto);
 	}
 
-	/**
-	 *
-	 * @param id
-	 * @returns
-	 */
 	async remove(id: number): Promise<User> {
 		return await this.userModel.findByIdAndDelete(id);
 	}
 
-	/**
-	 *
-	 * @param email
-	 * @returns
-	 */
 	private async isEmailTaken(email: string): Promise<boolean> {
 		const user = await this.userModel.findOne({ email });
 		return !!user;

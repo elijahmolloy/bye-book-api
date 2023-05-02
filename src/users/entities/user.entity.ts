@@ -1,6 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRole } from '../enum/user-role.enum';
 import { Document, HydratedDocument } from 'mongoose';
+import { NotImplementedException } from '@nestjs/common';
+import * as bcrypt from 'bcrypt';
 
 export type UserDocument = HydratedDocument<User>;
 
@@ -34,6 +36,11 @@ export class User extends Document {
 
 	@Prop({ default: false })
 	isEmailVerified: boolean;
+
+	async isPasswordMatch(password): Promise<boolean> {
+		const user = this;
+		return await bcrypt.compare(password, user.password);
+	}
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

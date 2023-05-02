@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import * as jwt from 'jsonwebtoken';
@@ -108,5 +108,13 @@ export class TokensService {
 		const verifyEmailToken = this.generateToken(user.id, expires, TokenType.VERIFY_EMAIL);
 
 		return await this.saveToken(verifyEmailToken, user.id, expires, TokenType.VERIFY_EMAIL);
+	}
+
+	async findOneByTokenAndType(token: string, type: TokenType): Promise<Token> {
+		return await this.tokenModel.findOne({ token, type });
+	}
+
+	async deleteManyByIdAndType(userId: string, type: TokenType.VERIFY_EMAIL) {
+		return await this.tokenModel.deleteMany({ user: userId, type });
 	}
 }
