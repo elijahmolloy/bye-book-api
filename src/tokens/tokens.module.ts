@@ -5,7 +5,10 @@ import { Token, TokenSchema } from './entities/token.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-	imports: [MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }]), ConfigModule],
+	imports: [
+		MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }]),
+		ConfigModule
+	],
 	providers: [TokensService],
 	exports: [TokensService]
 })

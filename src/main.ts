@@ -7,7 +7,7 @@ async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.enableVersioning({
 		type: VersioningType.URI
-	})
+	});
 	app.useGlobalPipes(
 		new ValidationPipe({
 			whitelist: true,
@@ -16,12 +16,11 @@ async function bootstrap() {
 		})
 	);
 
-	if (['development', 'testing'].includes(process.env.ENVIRONMENT))
-	{	
+	if (['development', 'testing'].includes(process.env.ENVIRONMENT)) {
 		const config = new DocumentBuilder()
-		.setTitle('Bye Book API')
-		.setDescription('Beta-API for the Bye Book project')
-		.build();
+			.setTitle('Bye Book API')
+			.setDescription('Beta-API for the Bye Book project')
+			.build();
 
 		const document = SwaggerModule.createDocument(app, config);
 		SwaggerModule.setup('swagger', app, document);

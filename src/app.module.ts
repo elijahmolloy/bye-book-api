@@ -8,6 +8,7 @@ import { User, UserSchema } from './users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { IsbndbModule } from './isbndb/isbndb.module';
 
 @Module({
 	imports: [
@@ -34,6 +35,15 @@ import { join } from 'path';
 						}
 					});
 
+					// If email has been altered, reset isEmailVerified
+					schema.pre('save', async function () {
+						const user = this;
+
+						if (user.isModified('email')) {
+							user.isEmailVerified = false;
+						}
+					});
+
 					// Determine if input password matches what a user has saved
 					schema.methods.isPasswordMatch = async function (
 						password: string
@@ -47,8 +57,9 @@ import { join } from 'path';
 			}
 		]),
 		ServeStaticModule.forRoot({
-			rootPath: join(__dirname, '..', 'client'),
-		  }),
+			rootPath: join(__dirname, '..', 'client')
+		}),
+		IsbndbModule
 	],
 	controllers: [],
 	providers: []
