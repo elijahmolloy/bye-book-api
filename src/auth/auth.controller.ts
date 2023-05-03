@@ -29,6 +29,7 @@ export class AuthController {
 
 		return new AuthDto({
 			user: new UserDto({
+				id: user.id,
 				firstName: user.firstName,
 				lastName: user.lastName,
 				email: user.email,
@@ -45,6 +46,7 @@ export class AuthController {
 
 		return new AuthDto({
 			user: new UserDto({
+				id: user.id,
 				firstName: user.firstName,
 				lastName: user.lastName,
 				email: user.email,

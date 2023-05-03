@@ -21,7 +21,7 @@ export class Token extends Document {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: User.name
 	})
-	user: ObjectId;
+	user: User;
 
 	@Prop({ enum: TokenType, required: true })
 	type: TokenType;

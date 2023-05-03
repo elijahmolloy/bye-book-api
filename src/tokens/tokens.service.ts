@@ -46,7 +46,7 @@ export class TokensService {
 		};
 
 		return await this.jwtService.signAsync(payload, {
-			secret: process.env.JWT_SECRET
+			secret
 		});
 	}
 
@@ -137,7 +137,7 @@ export class TokensService {
 		await this.tokenModel.findByIdAndDelete(id);
 	}
 
-	async deleteManyByIdAndType(userId: string, type: TokenType.VERIFY_EMAIL) {
+	async deleteManyByUserIdAndType(userId: string, type: TokenType.VERIFY_EMAIL) {
 		return await this.tokenModel.deleteMany({ user: userId, type });
 	}
 }

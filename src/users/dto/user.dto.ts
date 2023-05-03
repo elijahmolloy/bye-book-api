@@ -3,6 +3,8 @@ export class UserDto {
 		Object.assign(this, partial);
 	}
 
+	id: string;
+
 	firstName: string;
 
 	lastName: string;

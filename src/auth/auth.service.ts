@@ -36,7 +36,7 @@ export class AuthService {
 				reAuthDto.refreshToken,
 				TokenType.REFRESH
 			);
-			const user = await this.usersService.findOne(+refreshTokenDocument.user);
+			const user = await this.usersService.findOne(refreshTokenDocument.user.id);
 			if (!user) {
 				throw new Error();
 			}
@@ -49,7 +49,6 @@ export class AuthService {
 	}
 
 	async resetPassword(resetPasswordToken: string, newPassword: string) {
-		//
 		throw new NotImplementedException();
 	}
 
@@ -59,12 +58,12 @@ export class AuthService {
 				verifyEmailToken,
 				TokenType.VERIFY_EMAIL
 			);
-			const user = await this.usersService.findOne(+verifyEmailTokenDocument.id);
+			const user = await this.usersService.findOne(verifyEmailTokenDocument.user.id);
 			if (!user) {
 				throw new Error('User not found');
 			}
 
-			await this.tokensService.deleteManyByIdAndType(user.id, TokenType.VERIFY_EMAIL);
+			await this.tokensService.deleteManyByUserIdAndType(user.id, TokenType.VERIFY_EMAIL);
 
 			user.isEmailVerified = true;
 			await user.save();

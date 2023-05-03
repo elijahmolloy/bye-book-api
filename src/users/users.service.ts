@@ -1,4 +1,4 @@
-import { BadRequestException, Inject, Injectable, NotImplementedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -33,19 +33,23 @@ export class UsersService {
 		throw new NotImplementedException();
 	}
 
-	async findOne(id: number): Promise<User> {
-		return await this.userModel.findById(id);
+	async findOne(id: string): Promise<User> {
+		try {
+			return await this.userModel.findById(id);
+		} catch (error) {
+			throw new NotFoundException('User not found');
+		}
 	}
 
 	async findOneByEmail(email: string): Promise<User> {
 		return await this.userModel.findOne({ email });
 	}
 
-	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
+	async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
 		return await this.userModel.findByIdAndUpdate(id, updateUserDto);
 	}
 
-	async remove(id: number): Promise<User> {
+	async remove(id: string): Promise<User> {
 		return await this.userModel.findByIdAndDelete(id);
 	}
 
