@@ -32,7 +32,8 @@ export class CreateUserDto {
 	@IsString()
 	@IsStrongPassword()
 	@ApiProperty({
-		description: 'Lowercase + Uppercase characters, Number, Symbol, and at least 8 characters',
+		description:
+			'Lowercase + Uppercase characters, Number, Symbol, and at least 8 characters',
 		example: 'password!sS3cur3'
 	})
 	password: string;

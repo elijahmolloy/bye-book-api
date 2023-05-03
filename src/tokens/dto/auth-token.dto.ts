@@ -1,10 +1,9 @@
 export class TokenDto {
+	constructor(partial: Partial<TokenDto>) {
+		Object.assign(this, partial);
+	}
 
-    constructor(partial: Partial<TokenDto>) {
-        Object.assign(this, partial);
-    }
+	token: string;
 
-    token: string;
-
-    expires: Date;
+	expires: Date;
 }

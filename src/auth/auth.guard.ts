@@ -3,19 +3,16 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-	constructor() {}
-
 	canActivate(
 		context: ExecutionContext
 	): boolean | Promise<boolean> | Observable<boolean> {
-    const request = context.switchToHttp().getRequest();
+		const request = context.switchToHttp().getRequest();
 
 		return true;
 	}
 
-  // private extractTokenFromHeader(request: Request): string | undefined {
-  //   const [type, token] = request.headers.authorization?.split(' ') ?? [];
-  //   return type === 'Bearer' ? token : undefined;
-  // }
-
+	// private extractTokenFromHeader(request: Request): string | undefined {
+	//   const [type, token] = request.headers.authorization?.split(' ') ?? [];
+	//   return type === 'Bearer' ? token : undefined;
+	// }
 }

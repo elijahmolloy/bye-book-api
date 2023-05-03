@@ -43,7 +43,9 @@ export class AuthController {
 
 	@Post('login')
 	async login(@Body() loginDto: LoginDto): Promise<AuthDto> {
-		const user = await this.authServices.loginWithEmailAndPassword(loginDto);
+		const user = await this.authServices.loginWithEmailAndPassword(
+			loginDto
+		);
 		const tokens = await this.tokensService.generateAuthTokens(user);
 
 		return new AuthDto({

@@ -1,12 +1,11 @@
-import { TokenDto } from "./auth-token.dto";
+import { TokenDto } from './auth-token.dto';
 
 export class AuthTokensDto {
+	constructor(partial: Partial<AuthTokensDto>) {
+		Object.assign(this, partial);
+	}
 
-    constructor(partial: Partial<AuthTokensDto>) {
-        Object.assign(this, partial);
-    }
+	access: TokenDto;
 
-    access: TokenDto;
-
-    refresh: TokenDto;
+	refresh: TokenDto;
 }
