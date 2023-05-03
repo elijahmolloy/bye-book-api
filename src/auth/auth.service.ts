@@ -9,6 +9,7 @@ import { TokensService } from 'src/tokens/tokens.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
+import { ReAuthDto } from './dto/re-auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,9 +27,9 @@ export class AuthService {
 		return user;
 	}
 
-	async logout(refreshToken: string) {
+	async logout(reAuthDto: ReAuthDto) {
 		await this.tokensService.deleteOneByTokenAndType(
-			refreshToken,
+			reAuthDto.refreshToken,
 			TokenType.REFRESH
 		);
 	}

@@ -38,7 +38,6 @@ export class User extends Document {
 	isEmailVerified: boolean;
 
 	async isPasswordMatch(password: string): Promise<boolean> {
-		// const user = this;
 		return await bcrypt.compare(password, this.password);
 	}
 }

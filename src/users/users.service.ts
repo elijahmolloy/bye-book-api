@@ -26,7 +26,8 @@ export class UsersService {
 			lastName: createUserDto.lastName,
 			email: createUserDto.email,
 			password: createUserDto.password,
-			role: UserRole.USER
+			role: UserRole.USER,
+			isEmailVerified: false
 		});
 	}
 
