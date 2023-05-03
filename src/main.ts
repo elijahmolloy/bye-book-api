@@ -20,6 +20,7 @@ async function bootstrap() {
 		const config = new DocumentBuilder()
 			.setTitle('Bye Book API')
 			.setDescription('Beta-API for the Bye Book project')
+			.addBearerAuth()
 			.build();
 
 		const document = SwaggerModule.createDocument(app, config);

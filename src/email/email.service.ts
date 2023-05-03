@@ -7,17 +7,17 @@ import Client from 'mailgun.js/client';
 @Injectable()
 export class EmailService {
 
-    private readonly mailgunClient: Client;
+    // private readonly mailgunClient: Client;
 
-    constructor(private readonly configService: ConfigService) {
-        const mailgun = new Mailgun(formData);
-        this.mailgunClient = mailgun.client({
-            username: 'api', 
-            key: configService.get('MAILGUN_PRIVATE_API_KEY')
-        });        
-    }
+    // constructor(private readonly configService: ConfigService) {
+    //     const mailgun = new Mailgun(formData);
+    //     this.mailgunClient = mailgun.client({
+    //         username: 'api', 
+    //         key: configService.get('MAILGUN_PRIVATE_API_KEY')
+    //     });        
+    // }
 
-    async sendVerificationEmail(): Promise<boolean> {
-        throw new NotImplementedException();
-    }
+    // async sendVerificationEmail(): Promise<boolean> {
+    //     throw new NotImplementedException();
+    // }
 }

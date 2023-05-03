@@ -1,8 +1,10 @@
 import {
+	Inject,
 	Injectable,
 	NotFoundException,
 	NotImplementedException,
-	UnauthorizedException
+	UnauthorizedException,
+	forwardRef
 } from '@nestjs/common';
 import { TokenType } from 'src/tokens/enum/token-type.enum';
 import { TokensService } from 'src/tokens/tokens.service';
@@ -44,7 +46,7 @@ export class AuthService {
 
 			await this.tokensService.delete(+refreshTokenDocument.id);
 			return this.tokensService.generateAuthTokens(user);
-			
+
 		} catch (error) {
 			throw new UnauthorizedException('Please authenticate');
 		}

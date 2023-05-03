@@ -4,12 +4,11 @@ import { AuthModule } from './auth/auth.module';
 import { TokensModule } from './tokens/tokens.module';
 import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
-import { User, UserSchema } from './users/entities/user.entity';
-import * as bcrypt from 'bcrypt';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { IsbndbModule } from './isbndb/isbndb.module';
 import { EmailModule } from './email/email.module';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
 	imports: [

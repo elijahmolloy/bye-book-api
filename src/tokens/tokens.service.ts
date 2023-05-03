@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
-import * as jwt from 'jsonwebtoken';
 import * as moment from 'moment';
 import { Model } from 'mongoose';
 import { User } from 'src/users/entities/user.entity';
@@ -15,6 +14,7 @@ import { TokenDto } from './dto/auth-token.dto';
 import { AuthTokensDto } from './dto/auth-tokens.dto';
 import { Token } from './entities/token.entity';
 import { TokenType } from './enum/token-type.enum';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class TokensService {
@@ -27,29 +27,30 @@ export class TokensService {
 	constructor(
 		configService: ConfigService,
 		@InjectModel(Token.name) private readonly tokenModel: Model<Token>,
-		private readonly usersService: UsersService
+		private readonly usersService: UsersService,
+		private readonly jwtService: JwtService
 	) {
-		this.jwtSecret = configService.get<string>('JWT_SECRET');
-		this.accessExpirationMinutes = configService.get<number>(
+		this.jwtSecret = configService.get('JWT_SECRET');
+		this.accessExpirationMinutes = configService.get(
 			'JWT_ACCESS_EXPIRATION_MINUTES'
 		);
-		this.refreshExpirationDays = configService.get<number>(
+		this.refreshExpirationDays = configService.get(
 			'JWT_REFRESH_EXPIRATION_DAYS'
 		);
-		this.resetPasswordExpirationMinutes = configService.get<number>(
+		this.resetPasswordExpirationMinutes = configService.get(
 			'JWT_RESET_PASSWORD_EXPIRATION_MINUTES'
 		);
-		this.verifyEmailExpirationMinutes = configService.get<number>(
+		this.verifyEmailExpirationMinutes = configService.get(
 			'JWT_VERIFY_EMAIL_EXPIRATION_MINUTES'
 		);
 	}
 
-	generateToken(
+	async generateToken(
 		userId: string,
 		expires: moment.Moment,
 		type: TokenType,
 		secret = this.jwtSecret
-	): string {
+	): Promise<string> {
 		const payload = {
 			sub: userId,
 			iat: moment().unix(),
@@ -57,7 +58,9 @@ export class TokensService {
 			type
 		};
 
-		return jwt.sign(payload, secret);
+		return await this.jwtService.signAsync(payload, {
+			secret: process.env.JWT_SECRET
+		});
 	}
 
 	async saveToken(
@@ -77,7 +80,7 @@ export class TokensService {
 	}
 
 	async verifyToken(token: string, type: TokenType): Promise<Token> {
-		const payload = jwt.verify(token, this.jwtSecret);
+		const payload = this.jwtService.verify(token, { secret: this.jwtSecret });
 		const tokenDocument = await this.tokenModel.findOne({
 			token,
 			type,
@@ -97,7 +100,7 @@ export class TokensService {
 			this.accessExpirationMinutes,
 			'minutes'
 		);
-		const accessToken = this.generateToken(
+		const accessToken = await this.generateToken(
 			user.id,
 			accessTokenExpires,
 			TokenType.ACCESS
@@ -107,7 +110,7 @@ export class TokensService {
 			this.refreshExpirationDays,
 			'days'
 		);
-		const refreshToken = this.generateToken(
+		const refreshToken = await this.generateToken(
 			user.id,
 			refreshTokenExpires,
 			TokenType.REFRESH
@@ -131,7 +134,7 @@ export class TokensService {
 		});
 	}
 
-	async generateResetPasswordToken(email: string) {
+	async generateResetPasswordToken(email: string): Promise<Token> {
 		const user = await this.usersService.findOneByEmail(email);
 		if (!user) {
 			throw new BadRequestException('No users found with this email');
@@ -141,7 +144,7 @@ export class TokensService {
 			this.resetPasswordExpirationMinutes,
 			'minutes'
 		);
-		const resetPasswordToken = this.generateToken(
+		const resetPasswordToken = await this.generateToken(
 			user.id,
 			expires,
 			TokenType.RESET_PASSWORD
@@ -155,12 +158,12 @@ export class TokensService {
 		);
 	}
 
-	async generateVerifyEmailToken(user: User) {
+	async generateVerifyEmailToken(user: User): Promise<Token> {
 		const expires = moment().add(
 			this.verifyEmailExpirationMinutes,
 			'minutes'
 		);
-		const verifyEmailToken = this.generateToken(
+		const verifyEmailToken = await this.generateToken(
 			user.id,
 			expires,
 			TokenType.VERIFY_EMAIL

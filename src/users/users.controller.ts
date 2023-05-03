@@ -5,14 +5,18 @@ import {
 	Body,
 	Patch,
 	Param,
-	Delete
+	Delete,
+	UseGuards
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/auth.guard';
 
 @ApiTags('Users')
+@ApiBearerAuth()
+@UseGuards(AuthGuard)
 @Controller({
 	path: 'users',
 	version: '1'
