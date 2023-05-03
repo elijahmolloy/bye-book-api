@@ -34,8 +34,20 @@ export class AuthService {
 		);
 	}
 
-	async refreshAuth(refreshToken: string) {
-		throw new NotImplementedException();
+	async refreshAuth(reAuthDto: ReAuthDto) {
+		try {
+			const refreshTokenDocument = await this.tokensService.verifyToken(reAuthDto.refreshToken, TokenType.REFRESH);
+			const user = await this.usersService.findOne(+refreshTokenDocument.user);
+			if (!user) {
+				throw new Error();
+			}
+
+			await this.tokensService.delete(+refreshTokenDocument.id);
+			return this.tokensService.generateAuthTokens(user);
+			
+		} catch (error) {
+			throw new UnauthorizedException('Please authenticate');
+		}
 	}
 
 	async resetPassword(resetPasswordToken: string, newPassword: string) {

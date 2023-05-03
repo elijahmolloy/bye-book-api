@@ -9,6 +9,7 @@ import * as bcrypt from 'bcrypt';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { IsbndbModule } from './isbndb/isbndb.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
 	imports: [
@@ -20,7 +21,8 @@ import { IsbndbModule } from './isbndb/isbndb.module';
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', 'client')
 		}),
-		IsbndbModule
+		IsbndbModule,
+		EmailModule
 	],
 	controllers: [],
 	providers: []

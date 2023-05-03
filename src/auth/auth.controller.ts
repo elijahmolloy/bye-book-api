@@ -13,6 +13,7 @@ import { UserDto } from 'src/users/dto/user.dto';
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ReAuthDto } from './dto/re-auth.dto';
+import { AuthTokensDto } from 'src/tokens/dto/auth-tokens.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -66,8 +67,8 @@ export class AuthController {
 	}
 
 	@Post('refresh-tokens')
-	async refreshTokens(): Promise<any> {
-		throw new NotImplementedException();
+	async refreshTokens(@Body() reAuthDto: ReAuthDto): Promise<AuthTokensDto> {
+		return await this.authServices.refreshAuth(reAuthDto);
 	}
 
 	@Post('forgot-password')
