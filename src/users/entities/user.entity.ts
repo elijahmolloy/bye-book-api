@@ -37,10 +37,36 @@ export class User extends Document {
 	@Prop({ default: false })
 	isEmailVerified: boolean;
 
-	async isPasswordMatch(password): Promise<boolean> {
+	async isPasswordMatch(password: string): Promise<boolean> {
 		const user = this;
+		console.log(`user.password: ${user.password}`);
+		console.log(`input password: ${password}`);
 		return await bcrypt.compare(password, user.password);
 	}
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
+UserSchema.pre('save', async function(next) {
+	const user = this;
+
+	// Hash password if it has changed
+	if (user.isModified('password')) {
+		user.password = await bcrypt.hash(user.password, 12);
+	}
+
+	// Reset isEmailVerified if email has been updated
+	if (user.isModified('email')) {
+		user.isEmailVerified = false;
+	}
+
+	next();
+});
+// UserSchema.pre('save', async function(next) {
+// 	const user = this;
+// 	if (user.isModified('password')) {
+
+// 	}
+
+// 	next();
+// });
+UserSchema.loadClass(User);

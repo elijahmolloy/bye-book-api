@@ -10,9 +10,9 @@ export class AuthService {
 
 	constructor(private readonly usersService: UsersService, private readonly tokensService: TokensService) {}
 
-	async loginWithEmailAndPassword(authDto: LoginDto): Promise<User> {
-		const user = await this.usersService.findOneByEmail(authDto.email);
-		if (!user || !(await user.isPasswordMatch(authDto.password))) {
+	async loginWithEmailAndPassword(loginDto: LoginDto): Promise<User> {
+		const user = await this.usersService.findOneByEmail(loginDto.email);
+		if (!user || !(await user.isPasswordMatch(loginDto.password))) {
 			throw new UnauthorizedException('Incorrect email or password')
 		}
 
@@ -20,11 +20,7 @@ export class AuthService {
 	}
 
 	async logout(refreshToken: string) {
-		const refreshTokenDocument = await this.tokensService.findOneByTokenAndType(refreshToken, TokenType.REFRESH);
-		if (!refreshTokenDocument) {
-			throw new NotFoundException();
-		}
-
+		await this.tokensService.deleteOneByTokenAndType(refreshToken, TokenType.REFRESH);
 	}
 
 	async refreshAuth(refreshToken: string) {

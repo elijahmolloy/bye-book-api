@@ -110,8 +110,17 @@ export class TokensService {
 		return await this.saveToken(verifyEmailToken, user.id, expires, TokenType.VERIFY_EMAIL);
 	}
 
-	async findOneByTokenAndType(token: string, type: TokenType): Promise<Token> {
-		return await this.tokenModel.findOne({ token, type });
+	async deleteOneByTokenAndType(token: string, type: TokenType): Promise<Token> {
+		const tokenDocument = await this.tokenModel.findOneAndDelete({ token, type });
+		if (!tokenDocument) {
+			throw new NotFoundException('Token not found');
+		}
+
+		return tokenDocument;
+	}
+
+	async delete(id: Number) {
+		await this.tokenModel.findByIdAndDelete(id);
 	}
 
 	async deleteManyByIdAndType(userId: string, type: TokenType.VERIFY_EMAIL) {
