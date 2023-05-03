@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-	constructor(test: string) {}
+	constructor() {}
 
 	canActivate(
 		context: ExecutionContext

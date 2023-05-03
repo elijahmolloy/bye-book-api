@@ -43,7 +43,7 @@ export class UsersService {
 	}
 
 	async findOneByEmail(email: string): Promise<User> {
-		throw new NotImplementedException();
+		return await this.userModel.findOne({ email });
 	}
 
 	async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
@@ -55,7 +55,7 @@ export class UsersService {
 	}
 
 	private async isEmailTaken(email: string): Promise<boolean> {
-		const user = await this.userModel.findOne({ email });
+		const user = await this.findOneByEmail(email);
 		return !!user;
 	}
 }
