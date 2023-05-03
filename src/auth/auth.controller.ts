@@ -9,6 +9,9 @@ import { TokensService } from 'src/tokens/tokens.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
 import { AuthDto } from './dto/auth.dto';
+import { UserDto } from 'src/users/dto/user.dto';
+import { AuthService } from './auth.service';
+import { LoginDto } from './dto/login.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -18,7 +21,8 @@ import { AuthDto } from './dto/auth.dto';
 export class AuthController {
 	constructor(
 		private readonly usersService: UsersService,
-		private readonly tokensService: TokensService
+		private readonly tokensService: TokensService,
+		private readonly authServices: AuthService
 	) {}
 
 	@Post('register')
@@ -26,12 +30,31 @@ export class AuthController {
 		const user = await this.usersService.create(createUserDto);
 		const tokens = await this.tokensService.generateAuthTokens(user);
 
-		return new AuthDto();
+		return new AuthDto({
+			user: new UserDto({
+				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+				isEmailVerified: user.isEmailVerified
+			}),
+			tokens
+		});
 	}
 
 	@Post('login')
-	async login(): Promise<any> {
-		throw new NotImplementedException();
+	async login(@Body() loginDto: LoginDto): Promise<AuthDto> {
+		const user = await this.authServices.loginWithEmailAndPassword(loginDto);
+		const tokens = await this.tokensService.generateAuthTokens(user);
+
+		return new AuthDto({
+			user: new UserDto({
+				firstName: user.firstName,
+				lastName: user.lastName,
+				email: user.email,
+				isEmailVerified: user.isEmailVerified
+			}),
+			tokens
+		});
 	}
 
 	@Post('logout')

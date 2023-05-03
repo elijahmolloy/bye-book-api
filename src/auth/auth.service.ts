@@ -3,15 +3,16 @@ import { TokenType } from 'src/tokens/enum/token-type.enum';
 import { TokensService } from 'src/tokens/tokens.service';
 import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
+import { LoginDto } from './dto/login.dto';
 
 @Injectable()
 export class AuthService {
 
 	constructor(private readonly usersService: UsersService, private readonly tokensService: TokensService) {}
 
-	async loginWithEmailAndPassword(email: string, password: string): Promise<User> {
-		const user = await this.usersService.findOneByEmail(email);
-		if (!user || !(await user.isPasswordMatch(password))) {
+	async loginWithEmailAndPassword(authDto: LoginDto): Promise<User> {
+		const user = await this.usersService.findOneByEmail(authDto.email);
+		if (!user || !(await user.isPasswordMatch(authDto.password))) {
 			throw new UnauthorizedException('Incorrect email or password')
 		}
 
