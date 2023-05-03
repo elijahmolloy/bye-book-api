@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	Inject,
-	Injectable,
-	NotImplementedException
-} from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotImplementedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
@@ -13,9 +8,7 @@ import { UserRole } from './enum/user-role.enum';
 
 @Injectable()
 export class UsersService {
-	constructor(
-		@InjectModel(User.name) private readonly userModel: Model<User>
-	) {}
+	constructor(@InjectModel(User.name) private readonly userModel: Model<User>) {}
 
 	async create(createUserDto: CreateUserDto): Promise<User> {
 		if (await this.isEmailTaken(createUserDto.email)) {

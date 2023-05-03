@@ -15,10 +15,7 @@ import { ReAuthDto } from './dto/re-auth.dto';
 
 @Injectable()
 export class AuthService {
-	constructor(
-		private readonly usersService: UsersService,
-		private readonly tokensService: TokensService
-	) {}
+	constructor(private readonly usersService: UsersService, private readonly tokensService: TokensService) {}
 
 	async loginWithEmailAndPassword(loginDto: LoginDto): Promise<User> {
 		const user = await this.usersService.findOneByEmail(loginDto.email);
@@ -30,15 +27,15 @@ export class AuthService {
 	}
 
 	async logout(reAuthDto: ReAuthDto) {
-		await this.tokensService.deleteOneByTokenAndType(
-			reAuthDto.refreshToken,
-			TokenType.REFRESH
-		);
+		await this.tokensService.deleteOneByTokenAndType(reAuthDto.refreshToken, TokenType.REFRESH);
 	}
 
 	async refreshAuth(reAuthDto: ReAuthDto) {
 		try {
-			const refreshTokenDocument = await this.tokensService.verifyToken(reAuthDto.refreshToken, TokenType.REFRESH);
+			const refreshTokenDocument = await this.tokensService.verifyToken(
+				reAuthDto.refreshToken,
+				TokenType.REFRESH
+			);
 			const user = await this.usersService.findOne(+refreshTokenDocument.user);
 			if (!user) {
 				throw new Error();
@@ -46,7 +43,6 @@ export class AuthService {
 
 			await this.tokensService.delete(+refreshTokenDocument.id);
 			return this.tokensService.generateAuthTokens(user);
-
 		} catch (error) {
 			throw new UnauthorizedException('Please authenticate');
 		}
@@ -59,22 +55,16 @@ export class AuthService {
 
 	async verifyEmail(verifyEmailToken: string) {
 		try {
-			const verifyEmailTokenDocument =
-				await this.tokensService.verifyToken(
-					verifyEmailToken,
-					TokenType.VERIFY_EMAIL
-				);
-			const user = await this.usersService.findOne(
-				+verifyEmailTokenDocument.id
+			const verifyEmailTokenDocument = await this.tokensService.verifyToken(
+				verifyEmailToken,
+				TokenType.VERIFY_EMAIL
 			);
+			const user = await this.usersService.findOne(+verifyEmailTokenDocument.id);
 			if (!user) {
 				throw new Error('User not found');
 			}
 
-			await this.tokensService.deleteManyByIdAndType(
-				user.id,
-				TokenType.VERIFY_EMAIL
-			);
+			await this.tokensService.deleteManyByIdAndType(user.id, TokenType.VERIFY_EMAIL);
 
 			user.isEmailVerified = true;
 			await user.save();

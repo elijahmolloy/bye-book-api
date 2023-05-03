@@ -1,9 +1,4 @@
-import {
-	Body,
-	Controller,
-	NotImplementedException,
-	Post
-} from '@nestjs/common';
+import { Body, Controller, NotImplementedException, Post } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { TokensService } from 'src/tokens/tokens.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
@@ -45,9 +40,7 @@ export class AuthController {
 
 	@Post('login')
 	async login(@Body() loginDto: LoginDto): Promise<AuthDto> {
-		const user = await this.authServices.loginWithEmailAndPassword(
-			loginDto
-		);
+		const user = await this.authServices.loginWithEmailAndPassword(loginDto);
 		const tokens = await this.tokensService.generateAuthTokens(user);
 
 		return new AuthDto({

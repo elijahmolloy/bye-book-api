@@ -1,9 +1,4 @@
-import {
-	BadRequestException,
-	Injectable,
-	NotFoundException,
-	UnauthorizedException
-} from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { InjectModel } from '@nestjs/mongoose';
 import * as moment from 'moment';
@@ -31,18 +26,10 @@ export class TokensService {
 		private readonly jwtService: JwtService
 	) {
 		this.jwtSecret = configService.get('JWT_SECRET');
-		this.accessExpirationMinutes = configService.get(
-			'JWT_ACCESS_EXPIRATION_MINUTES'
-		);
-		this.refreshExpirationDays = configService.get(
-			'JWT_REFRESH_EXPIRATION_DAYS'
-		);
-		this.resetPasswordExpirationMinutes = configService.get(
-			'JWT_RESET_PASSWORD_EXPIRATION_MINUTES'
-		);
-		this.verifyEmailExpirationMinutes = configService.get(
-			'JWT_VERIFY_EMAIL_EXPIRATION_MINUTES'
-		);
+		this.accessExpirationMinutes = configService.get('JWT_ACCESS_EXPIRATION_MINUTES');
+		this.refreshExpirationDays = configService.get('JWT_REFRESH_EXPIRATION_DAYS');
+		this.resetPasswordExpirationMinutes = configService.get('JWT_RESET_PASSWORD_EXPIRATION_MINUTES');
+		this.verifyEmailExpirationMinutes = configService.get('JWT_VERIFY_EMAIL_EXPIRATION_MINUTES');
 	}
 
 	async generateToken(
@@ -96,31 +83,12 @@ export class TokensService {
 	}
 
 	async generateAuthTokens(user: User): Promise<AuthTokensDto> {
-		const accessTokenExpires = moment().add(
-			this.accessExpirationMinutes,
-			'minutes'
-		);
-		const accessToken = await this.generateToken(
-			user.id,
-			accessTokenExpires,
-			TokenType.ACCESS
-		);
+		const accessTokenExpires = moment().add(this.accessExpirationMinutes, 'minutes');
+		const accessToken = await this.generateToken(user.id, accessTokenExpires, TokenType.ACCESS);
 
-		const refreshTokenExpires = moment().add(
-			this.refreshExpirationDays,
-			'days'
-		);
-		const refreshToken = await this.generateToken(
-			user.id,
-			refreshTokenExpires,
-			TokenType.REFRESH
-		);
-		await this.saveToken(
-			refreshToken,
-			user.id,
-			refreshTokenExpires,
-			TokenType.REFRESH
-		);
+		const refreshTokenExpires = moment().add(this.refreshExpirationDays, 'days');
+		const refreshToken = await this.generateToken(user.id, refreshTokenExpires, TokenType.REFRESH);
+		await this.saveToken(refreshToken, user.id, refreshTokenExpires, TokenType.REFRESH);
 
 		return new AuthTokensDto({
 			access: new TokenDto({
@@ -140,47 +108,20 @@ export class TokensService {
 			throw new BadRequestException('No users found with this email');
 		}
 
-		const expires = moment().add(
-			this.resetPasswordExpirationMinutes,
-			'minutes'
-		);
-		const resetPasswordToken = await this.generateToken(
-			user.id,
-			expires,
-			TokenType.RESET_PASSWORD
-		);
+		const expires = moment().add(this.resetPasswordExpirationMinutes, 'minutes');
+		const resetPasswordToken = await this.generateToken(user.id, expires, TokenType.RESET_PASSWORD);
 
-		return await this.saveToken(
-			resetPasswordToken,
-			user.id,
-			expires,
-			TokenType.RESET_PASSWORD
-		);
+		return await this.saveToken(resetPasswordToken, user.id, expires, TokenType.RESET_PASSWORD);
 	}
 
 	async generateVerifyEmailToken(user: User): Promise<Token> {
-		const expires = moment().add(
-			this.verifyEmailExpirationMinutes,
-			'minutes'
-		);
-		const verifyEmailToken = await this.generateToken(
-			user.id,
-			expires,
-			TokenType.VERIFY_EMAIL
-		);
+		const expires = moment().add(this.verifyEmailExpirationMinutes, 'minutes');
+		const verifyEmailToken = await this.generateToken(user.id, expires, TokenType.VERIFY_EMAIL);
 
-		return await this.saveToken(
-			verifyEmailToken,
-			user.id,
-			expires,
-			TokenType.VERIFY_EMAIL
-		);
+		return await this.saveToken(verifyEmailToken, user.id, expires, TokenType.VERIFY_EMAIL);
 	}
 
-	async deleteOneByTokenAndType(
-		token: string,
-		type: TokenType
-	): Promise<Token> {
+	async deleteOneByTokenAndType(token: string, type: TokenType): Promise<Token> {
 		const tokenDocument = await this.tokenModel.findOneAndDelete({
 			token,
 			type

@@ -13,7 +13,8 @@ import { JwtModule } from '@nestjs/jwt';
 		UsersModule,
 		JwtModule.register({
 			secret: process.env.JWT_SECRET
-		})],
+		})
+	],
 	providers: [TokensService],
 	exports: [TokensService]
 })
