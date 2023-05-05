@@ -1,5 +1,5 @@
-import { Body, Controller, NotImplementedException, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, HttpCode, NotImplementedException, Post, Query, Request, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { TokensService } from 'src/tokens/tokens.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 import { UsersService } from 'src/users/users.service';
@@ -9,6 +9,11 @@ import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { ReAuthDto } from './dto/re-auth.dto';
 import { AuthTokensDto } from 'src/tokens/dto/auth-tokens.dto';
+import { AuthGuard } from './auth.guard';
+import { UserDecorator } from './decorator/user.decorator';
+import { User } from 'src/users/entities/user.entity';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
 
 @ApiTags('Auth')
 @Controller({
@@ -56,6 +61,7 @@ export class AuthController {
 		});
 	}
 
+	@HttpCode(204)
 	@Post('logout')
 	async logout(@Body() reAuthDto: ReAuthDto) {
 		await this.authServices.logout(reAuthDto);
@@ -66,23 +72,31 @@ export class AuthController {
 		return await this.authServices.refreshAuth(reAuthDto);
 	}
 
+	@HttpCode(204)
 	@Post('forgot-password')
-	async forgotPassword(): Promise<any> {
-		throw new NotImplementedException();
+	async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+		const resetPasswordToken = await this.tokensService.generateResetPasswordToken(forgotPasswordDto.email);
+		// email service should send password reset email here
 	}
 
+	@HttpCode(204)
 	@Post('reset-password')
-	async resetPassword(): Promise<any> {
-		throw new NotImplementedException();
+	async resetPassword(@Query('token') token: string, @Body() resetPasswordDto: ResetPasswordDto) {
+		await this.authServices.resetPassword(token, resetPasswordDto.password);
 	}
 
+	@HttpCode(204)
+	@ApiBearerAuth()
+	@UseGuards(AuthGuard)
 	@Post('send-verification-email')
-	async sendVerificationEmail(): Promise<any> {
-		throw new NotImplementedException();
+	async sendVerificationEmail(@UserDecorator() user: User) {
+		const verifyEmailToken = await this.tokensService.generateVerifyEmailToken(user);
+		// emailService should send verification email here
 	}
 
+	@HttpCode(204)
 	@Post('verify-email')
-	async verifyEmail(): Promise<any> {
-		throw new NotImplementedException();
+	async verifyEmail(@Query('token') token: string) {
+		await this.authServices.verifyEmail(token);
 	}
 }
