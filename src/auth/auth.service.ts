@@ -12,6 +12,8 @@ import { User } from 'src/users/entities/user.entity';
 import { UsersService } from 'src/users/users.service';
 import { LoginDto } from './dto/login.dto';
 import { ReAuthDto } from './dto/re-auth.dto';
+import { UpdateUserDto } from 'src/users/dto/update-user.dto';
+import { Token } from 'src/tokens/entities/token.entity';
 
 @Injectable()
 export class AuthService {
@@ -49,7 +51,18 @@ export class AuthService {
 	}
 
 	async resetPassword(resetPasswordToken: string, newPassword: string) {
-		throw new NotImplementedException();
+		try {
+			const resetPasswordTokenDocument = await this.tokensService.verifyToken(resetPasswordToken, TokenType.RESET_PASSWORD);
+			const user = await this.usersService.findOne(resetPasswordTokenDocument.user.id);
+			if (!user) {
+				throw new Error();
+			}
+
+			await this.usersService.update(user.id, new UpdateUserDto({ password: newPassword }));
+			await this.tokensService.deleteManyByUserIdAndType(user.id, TokenType.RESET_PASSWORD);
+		} catch (error) {
+			throw new UnauthorizedException('Password reset failed');
+		}
 	}
 
 	async verifyEmail(verifyEmailToken: string) {

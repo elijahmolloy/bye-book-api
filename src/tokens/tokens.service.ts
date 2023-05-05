@@ -137,7 +137,7 @@ export class TokensService {
 		await this.tokenModel.findByIdAndDelete(id);
 	}
 
-	async deleteManyByUserIdAndType(userId: string, type: TokenType.VERIFY_EMAIL) {
+	async deleteManyByUserIdAndType(userId: string, type: TokenType) {
 		return await this.tokenModel.deleteMany({ user: userId, type });
 	}
 }
