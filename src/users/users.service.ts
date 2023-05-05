@@ -46,15 +46,23 @@ export class UsersService {
 	}
 
 	async update(id: string, updateUserDto: UpdateUserDto): Promise<User> {
-		return await this.userModel.findByIdAndUpdate(id, updateUserDto);
+		const user = await this.findOne(id);
+
+		if (updateUserDto.email && (await this.isEmailTaken(updateUserDto.email, user.id))) {
+			throw new BadRequestException('Email already taken');
+		}
+
+		// user.save() is used to ensure the pre-save is executed for these changes
+		Object.assign(user, updateUserDto);
+		return await user.save();
 	}
 
 	async remove(id: string): Promise<User> {
 		return await this.userModel.findByIdAndDelete(id);
 	}
 
-	private async isEmailTaken(email: string): Promise<boolean> {
-		const user = await this.findOneByEmail(email);
+	private async isEmailTaken(email: string, excludeUserId: string = undefined): Promise<boolean> {
+		const user = await this.userModel.findOne({ email, _id: { $ne: excludeUserId } })
 		return !!user;
 	}
 }

@@ -44,7 +44,8 @@ export class User extends Document {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.pre('save', async function (next) {
-	// Hash password if it has changed
+
+	// Hash password if it has been updated
 	if (this.isModified('password')) {
 		this.password = await bcrypt.hash(this.password, 12);
 	}
@@ -56,4 +57,5 @@ UserSchema.pre('save', async function (next) {
 
 	next();
 });
+
 UserSchema.loadClass(User);
