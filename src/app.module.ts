@@ -6,9 +6,9 @@ import { ConfigModule } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
-import { IsbndbModule } from './isbndb/isbndb.module';
 import { EmailModule } from './email/email.module';
-import { JwtModule } from '@nestjs/jwt';
+import { StripeModule } from './stripe/stripe.module';
+import { BooksModule } from './books/books.module';
 
 @Module({
 	imports: [
@@ -20,8 +20,9 @@ import { JwtModule } from '@nestjs/jwt';
 		ServeStaticModule.forRoot({
 			rootPath: join(__dirname, '..', 'client')
 		}),
-		IsbndbModule,
-		EmailModule
+		EmailModule,
+		StripeModule,
+		BooksModule
 	],
 	controllers: [],
 	providers: []

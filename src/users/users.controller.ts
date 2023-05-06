@@ -6,6 +6,10 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/auth.guard';
 import { UserRole, UserRoles } from './enum/user-role.enum';
 import { UserDto } from './dto/user.dto';
+import { StripeService } from 'src/stripe/stripe.service';
+import { UserDecorator } from 'src/auth/decorator/user.decorator';
+import { User } from './entities/user.entity';
+import Stripe from 'stripe';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -15,7 +19,7 @@ import { UserDto } from './dto/user.dto';
 	version: '1'
 })
 export class UsersController {
-	constructor(private readonly usersService: UsersService) {}
+	constructor(private readonly usersService: UsersService, private readonly stripeService: StripeService) {}
 
 	@Post()
 	@UserRoles(UserRole.ADMIN)
@@ -36,13 +40,16 @@ export class UsersController {
 	async findAll(): Promise<UserDto[]> {
 		const users = await this.usersService.findAll();
 
-		return users.map(user => new UserDto({
-			id: user.id,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			email: user.email,
-			isEmailVerified: user.isEmailVerified
-		}));
+		return users.map(
+			(user) =>
+				new UserDto({
+					id: user.id,
+					firstName: user.firstName,
+					lastName: user.lastName,
+					email: user.email,
+					isEmailVerified: user.isEmailVerified
+				})
+		);
 	}
 
 	@Get(':id')
@@ -86,5 +93,17 @@ export class UsersController {
 			email: user.email,
 			isEmailVerified: user.isEmailVerified
 		});
+	}
+
+	@UserRoles(UserRole.ADMIN)
+	@Post(':id/connect-account')
+	async createConnectAccount(@Param('id') id: string, @UserDecorator() user: User) {
+		const connectAccount = await this.stripeService.createConnectAccount(user);
+	}
+
+	@UserRoles(UserRole.ADMIN)
+	@Delete(':id/connect-account')
+	async deleteConnectAccount(@Param('id') id: string, @UserDecorator() user: User) {
+		return await this.stripeService.deleteConnectAccount(user);
 	}
 }

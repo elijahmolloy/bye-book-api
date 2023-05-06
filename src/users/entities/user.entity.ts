@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { UserRole } from '../enum/user-role.enum';
 import { Document, HydratedDocument } from 'mongoose';
-import { NotImplementedException } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 
 export type UserDocument = HydratedDocument<User>;
@@ -20,6 +19,7 @@ export class User extends Document {
 	lastName: string;
 
 	@Prop({
+		immutable: true,
 		required: true,
 		trim: true,
 		unique: true,
@@ -37,6 +37,9 @@ export class User extends Document {
 	@Prop({ default: false })
 	isEmailVerified: boolean;
 
+	@Prop()
+	connectAccountId: string;
+
 	async isPasswordMatch(password: string): Promise<boolean> {
 		return await bcrypt.compare(password, this.password);
 	}
@@ -44,7 +47,6 @@ export class User extends Document {
 
 export const UserSchema = SchemaFactory.createForClass(User);
 UserSchema.pre('save', async function (next) {
-
 	// Hash password if it has been updated
 	if (this.isModified('password')) {
 		this.password = await bcrypt.hash(this.password, 12);

@@ -62,7 +62,7 @@ export class UsersService {
 	}
 
 	private async isEmailTaken(email: string, excludeUserId: string = undefined): Promise<boolean> {
-		const user = await this.userModel.findOne({ email, _id: { $ne: excludeUserId } })
+		const user = await this.userModel.findOne({ email, _id: { $ne: excludeUserId } });
 		return !!user;
 	}
 }

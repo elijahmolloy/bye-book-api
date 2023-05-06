@@ -52,7 +52,10 @@ export class AuthService {
 
 	async resetPassword(resetPasswordToken: string, newPassword: string) {
 		try {
-			const resetPasswordTokenDocument = await this.tokensService.verifyToken(resetPasswordToken, TokenType.RESET_PASSWORD);
+			const resetPasswordTokenDocument = await this.tokensService.verifyToken(
+				resetPasswordToken,
+				TokenType.RESET_PASSWORD
+			);
 			const user = await this.usersService.findOne(resetPasswordTokenDocument.user.id);
 			if (!user) {
 				throw new Error();
