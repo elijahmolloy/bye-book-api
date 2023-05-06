@@ -9,11 +9,6 @@ export class EmailService {
 	private readonly mailgunClient: Client;
 
 	constructor(configService: ConfigService) {
-		const mailgun = new Mailgun(formData);
-		this.mailgunClient = mailgun.client({
-			username: 'api',
-			key: configService.get('MAILGUN_PRIVATE_API_KEY')
-		});
 	}
 
 	async sendVerificationEmail() {
