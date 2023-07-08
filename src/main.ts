@@ -19,7 +19,7 @@ async function bootstrap() {
 	if (['development', 'testing'].includes(process.env.ENVIRONMENT)) {
 		const config = new DocumentBuilder()
 			.setTitle('Bye Book API')
-			.setDescription('Beta-API for the Bye Book project')
+			.setDescription('API for the Bye Book project')
 			.addBearerAuth()
 			.build();
 

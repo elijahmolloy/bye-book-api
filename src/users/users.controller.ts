@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Request, HttpCode, NotImplementedException } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -9,7 +9,7 @@ import { UserDto } from './dto/user.dto';
 import { StripeService } from 'src/stripe/stripe.service';
 import { UserDecorator } from 'src/auth/decorator/user.decorator';
 import { User } from './entities/user.entity';
-import Stripe from 'stripe';
+// import { Stripe } from 'stripe';
 
 @ApiTags('Users')
 @ApiBearerAuth()
@@ -98,7 +98,9 @@ export class UsersController {
 	@UserRoles(UserRole.ADMIN)
 	@Post(':id/connect-account')
 	async createConnectAccount(@Param('id') id: string, @UserDecorator() user: User) {
-		const connectAccount = await this.stripeService.createConnectAccount(user);
+		throw new NotImplementedException();
+
+		// const connectAccount = await this.stripeService.createConnectAccount(user);
 	}
 
 	@UserRoles(UserRole.ADMIN)
